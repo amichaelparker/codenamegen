@@ -1,4 +1,4 @@
-var request = require('request');
+var axios = require('axios');
 var cheerio = require('cheerio');
 var express = require('express');
 var router = express.Router();
@@ -12,14 +12,14 @@ router.get('/', function(req, res, next) {
 });
 
 function getPage(callback) {
-  request('https://en.wikipedia.org/wiki/List_of_Intel_codenames', function (error, response, body) {
-    if (!error && response.statusCode == 200) {
-      var $ = cheerio.load(body, {
+  axios.get('https://en.wikipedia.org/wiki/List_of_Intel_codenames').then(response => {
+    if (response.status == 200) {
+      var $ = cheerio.load(response.data, {
         normalizeWhitespace: true
       });
     }
     callback($);
-  })
+  }).catch(e => console.log(e))
 }
 
 function pushNames(page) {
